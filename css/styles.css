@@ -93,6 +93,7 @@ button:not(:disabled):hover {
 
 /* Styles for the footer */
 footer {
+  box-sizing: border-box;
   text-align: center;
   padding: 20px;
   background-color: #f2f2f2;
