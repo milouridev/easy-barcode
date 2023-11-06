@@ -20,6 +20,7 @@ body {
   color: #333;
   padding: 20px;
   background-color: #f8f8f8;
+  padding-bottom: 80px;
 }
 
 /* Container for the main content */
@@ -112,9 +113,16 @@ footer {
 @media (max-width: 600px) {
   body {
     padding: 10px;
+    padding-bottom: 80px; /* Adjust this value as needed */
   }
 
   main {
     padding: 10px;
+  }
+
+  /* Adjust barcode size for smaller screens */
+  #ean-13 {
+    width: 90%;
+    margin: 0 auto 20px;
   }
 }
