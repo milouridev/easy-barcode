@@ -5,6 +5,8 @@ const inputNumber = document.getElementById("inputNumber");
 const barcode = document.getElementById("ean-13");
 const validationMessage = document.getElementById("validationMessage");
 const successMessage = document.getElementById("successMessage");
+const saveButtonSVG = document.getElementById("saveButtonSVG");
+const saveButtonJPEG = document.getElementById("saveButtonJPEG");
 
 // Initially disable the display button
 displayButton.disabled = true;
@@ -24,6 +26,12 @@ generateButton.addEventListener("click", (event) => {
   generateRandomBarcode();
 });
 
+// Add an event listener to the save button svg
+saveButtonSVG.addEventListener("click", saveAsSVG);
+
+// Add an event listener to the save button jpeg
+saveButtonJPEG.addEventListener("click", saveAsJPEG);
+
 // Validate input
 function validateInput() {
   const isValid = isValidInput(inputNumber.value);
@@ -41,6 +49,8 @@ function generateBarcode() {
   if (isValidInput(inputValue)) {
     const ean13Number = calculateEAN13(inputValue);
     JsBarcode(barcode, ean13Number, { format: "ean13" });
+    saveButtonSVG.disabled = false;
+    saveButtonJPEG.disabled = false;
     successMessage.textContent =
       "Great! Your barcode was generated successfully.";
   } else {
@@ -54,6 +64,8 @@ function generateRandomBarcode() {
   inputNumber.value = randomNumber;
   const ean13Number = calculateEAN13(randomNumber);
   JsBarcode(barcode, ean13Number, { format: "ean13" });
+  saveButtonSVG.disabled = false;
+  saveButtonJPEG.disabled = false;
   validationMessage.textContent = "";
   successMessage.textContent =
     "Great! Your random barcode was generated successfully.";
@@ -82,4 +94,74 @@ function calculateEAN13(first12Digits) {
   checkDigit = (10 - (checkDigit % 10)) % 10;
 
   return `${first12Digits}${checkDigit}`;
+}
+
+function saveAsSVG() {
+    console.log("hola");
+  // Create a new XMLSerializer
+  const serializer = new XMLSerializer();
+
+  // Serialize the SVG element to a string
+  const svgStr = serializer.serializeToString(barcode);
+
+  // Convert the SVG string to a data URL
+  const dataUrl = "data:image/svg+xml;base64," + btoa(svgStr);
+
+  // Create a new anchor element
+  const downloadLink = document.createElement("a");
+
+  // Set the href of the anchor element to the data URL
+  downloadLink.href = dataUrl;
+
+  // Set the download attribute of the anchor element to specify the filename
+  downloadLink.download = "barcode.svg";
+
+  // Trigger a click event on the anchor element
+  downloadLink.click();
+}
+
+function saveAsJPEG() {
+    console.log("hola");
+  // Create a new XMLSerializer
+  const serializer = new XMLSerializer();
+
+  // Serialize the SVG element to a string
+  const svgStr = serializer.serializeToString(barcode);
+
+  // Convert the SVG string to a data URL
+  const dataUrl = "data:image/svg+xml;base64," + btoa(svgStr);
+
+  // Create a new Image element
+  const img = new Image();
+  img.src = dataUrl;
+
+  console.log("hola");
+
+  img.onload = function () {
+    // Create a new canvas element
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    // Get the 2D context of the canvas
+    const ctx = canvas.getContext("2d");
+
+    // Draw the image onto the canvas
+    ctx.drawImage(img, 0, 0);
+
+    // Convert the canvas to a JPEG
+    const jpegDataUrl = canvas.toDataURL("image/jpeg");
+
+    // Create a new anchor element
+    const downloadLink = document.createElement("a");
+
+    // Set the href of the anchor element to the JPEG data URL
+    downloadLink.href = jpegDataUrl;
+
+    // Set the download attribute of the anchor element to specify the filename
+    downloadLink.download = "barcode.jpeg";
+
+    // Trigger a click event on the anchor element
+    downloadLink.click();
+  };
 }
