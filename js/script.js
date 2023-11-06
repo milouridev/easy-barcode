@@ -42,7 +42,6 @@ function validateInput() {
     : "";
   successMessage.textContent = "";
 
-  console.log(inputNumber.value)
   if(inputNumber.value == '092309010206') {
     console.log("hola");
     successMessage.textContent = "Descubriste el código secreto!. Jessy. Te quiero <3";
