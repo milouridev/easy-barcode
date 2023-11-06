@@ -1,12 +1,12 @@
 // Get DOM elements
-const displayButton = document.getElementById("displayButton");
-const generateButton = document.getElementById("generateButton");
-const inputNumber = document.getElementById("inputNumber");
-const barcode = document.getElementById("ean-13");
-const validationMessage = document.getElementById("validationMessage");
-const successMessage = document.getElementById("successMessage");
-const saveButtonSVG = document.getElementById("saveButtonSVG");
-const saveButtonJPEG = document.getElementById("saveButtonJPEG");
+const displayButton: HTMLButtonElement = document.getElementById("displayButton") as HTMLButtonElement;
+const generateButton: HTMLButtonElement = document.getElementById("generateButton") as HTMLButtonElement;
+const inputNumber: HTMLInputElement = document.getElementById("inputNumber") as HTMLInputElement;
+const barcode: SVGSVGElement = document.getElementById("ean-13") as SVGSVGElement;
+const validationMessage: HTMLElement = document.getElementById("validationMessage") as HTMLElement;
+const successMessage: HTMLElement = document.getElementById("successMessage") as HTMLElement;
+const saveButtonSVG: HTMLButtonElement = document.getElementById("saveButtonSVG") as HTMLButtonElement;
+const saveButtonJPEG: HTMLButtonElement = document.getElementById("saveButtonJPEG") as HTMLButtonElement;
 
 // Initially disable the display button
 displayButton.disabled = true;
@@ -15,13 +15,13 @@ displayButton.disabled = true;
 inputNumber.addEventListener("input", validateInput);
 
 // Add event listener to display button
-displayButton.addEventListener("click", (event) => {
+displayButton.addEventListener("click", (event: Event) => {
   event.preventDefault();
   generateBarcode();
 });
 
 // Add event listener to generate button
-generateButton.addEventListener("click", (event) => {
+generateButton.addEventListener("click", (event: Event) => {
   event.preventDefault();
   generateRandomBarcode();
 });
@@ -33,8 +33,8 @@ saveButtonSVG.addEventListener("click", saveAsSVG);
 saveButtonJPEG.addEventListener("click", saveAsJPEG);
 
 // Validate input
-function validateInput() {
-  const isValid = isValidInput(inputNumber.value);
+function validateInput(): void {
+  const isValid: boolean = isValidInput(inputNumber.value);
 
   displayButton.disabled = !isValid;
   validationMessage.textContent = !isValid
@@ -44,10 +44,10 @@ function validateInput() {
 }
 
 // Generate barcode
-function generateBarcode() {
-  const inputValue = inputNumber.value;
+function generateBarcode(): void {
+  const inputValue: string = inputNumber.value;
   if (isValidInput(inputValue)) {
-    const ean13Number = calculateEAN13(inputValue);
+    const ean13Number: string = calculateEAN13(inputValue);
     JsBarcode(barcode, ean13Number, { format: "ean13" });
     saveButtonSVG.disabled = false;
     saveButtonJPEG.disabled = false;
@@ -59,10 +59,10 @@ function generateBarcode() {
 }
 
 // Generate random barcode
-function generateRandomBarcode() {
-  const randomNumber = generateRandomNumber(12);
+function generateRandomBarcode(): void {
+  const randomNumber: string = generateRandomNumber(12);
   inputNumber.value = randomNumber;
-  const ean13Number = calculateEAN13(randomNumber);
+  const ean13Number: string = calculateEAN13(randomNumber);
   JsBarcode(barcode, ean13Number, { format: "ean13" });
   saveButtonSVG.disabled = false;
   saveButtonJPEG.disabled = false;
@@ -72,13 +72,13 @@ function generateRandomBarcode() {
 }
 
 // Validate input
-function isValidInput(input) {
-  return input.length === 12 && !isNaN(input);
+function isValidInput(input: string): boolean {
+  return input.length === 12 && !isNaN(Number(input));
 }
 
 // Generate random number
-function generateRandomNumber(length) {
-  let result = "";
+function generateRandomNumber(length: number): string {
+  let result: string = "";
   for (let i = 0; i < length; i++) {
     result += Math.floor(Math.random() * 10);
   }
@@ -86,28 +86,28 @@ function generateRandomNumber(length) {
 }
 
 // Calculate EAN-13 number
-function calculateEAN13(first12Digits) {
-  let checkDigit = 0;
+function calculateEAN13(first12Digits: string): string {
+  let checkDigit: number = 0;
   for (let i = 0; i < 12; i++) {
-    checkDigit += (i % 2 === 0 ? 1 : 3) * first12Digits[i];
+    checkDigit += (i % 2 === 0 ? 1 : 3) * Number(first12Digits[i]);
   }
   checkDigit = (10 - (checkDigit % 10)) % 10;
 
   return `${first12Digits}${checkDigit}`;
 }
 
-function saveAsSVG() {
+function saveAsSVG(): void {
   // Create a new XMLSerializer
-  const serializer = new XMLSerializer();
+  const serializer: XMLSerializer = new XMLSerializer();
 
   // Serialize the SVG element to a string
-  const svgStr = serializer.serializeToString(barcode);
+  const svgStr: string = serializer.serializeToString(barcode);
 
   // Convert the SVG string to a data URL
-  const dataUrl = "data:image/svg+xml;base64," + btoa(svgStr);
+  const dataUrl: string = "data:image/svg+xml;base64," + btoa(svgStr);
 
   // Create a new anchor element
-  const downloadLink = document.createElement("a");
+  const downloadLink: HTMLAnchorElement = document.createElement("a");
 
   // Set the href of the anchor element to the data URL
   downloadLink.href = dataUrl;
@@ -119,37 +119,39 @@ function saveAsSVG() {
   downloadLink.click();
 }
 
-function saveAsJPEG() {
+function saveAsJPEG(): void {
   // Create a new XMLSerializer
-  const serializer = new XMLSerializer();
+  const serializer: XMLSerializer = new XMLSerializer();
 
   // Serialize the SVG element to a string
-  const svgStr = serializer.serializeToString(barcode);
+  const svgStr: string = serializer.serializeToString(barcode);
 
   // Convert the SVG string to a data URL
-  const dataUrl = "data:image/svg+xml;base64," + btoa(svgStr);
+  const dataUrl: string = "data:image/svg+xml;base64," + btoa(svgStr);
 
   // Create a new Image element
-  const img = new Image();
+  const img: HTMLImageElement = new Image();
   img.src = dataUrl;
 
-  img.onload = function () {
+  img.onload = function (): void {
     // Create a new canvas element
-    const canvas = document.createElement("canvas");
+    const canvas: HTMLCanvasElement = document.createElement("canvas");
     canvas.width = img.width;
     canvas.height = img.height;
 
     // Get the 2D context of the canvas
-    const ctx = canvas.getContext("2d");
+    const ctx: CanvasRenderingContext2D | null = canvas.getContext("2d");
 
     // Draw the image onto the canvas
-    ctx.drawImage(img, 0, 0);
+    if (ctx) {
+      ctx.drawImage(img, 0, 0);
+    }
 
     // Convert the canvas to a JPEG
-    const jpegDataUrl = canvas.toDataURL("image/jpeg");
+    const jpegDataUrl: string = canvas.toDataURL("image/jpeg");
 
     // Create a new anchor element
-    const downloadLink = document.createElement("a");
+    const downloadLink: HTMLAnchorElement = document.createElement("a");
 
     // Set the href of the anchor element to the JPEG data URL
     downloadLink.href = jpegDataUrl;
